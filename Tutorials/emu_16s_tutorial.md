@@ -1,17 +1,14 @@
-# Taxonomic Profiling with EMU
+# 16S Taxonomic Profiling with EMU
 ### A tutorial for Nanopore full-length 16S amplicon data
 
 ---
-
-> **Why EMU instead of DADA2?**
-> DADA2's error model assumes quality scores reliably predict errors (an Illumina assumption). Nanopore quality scores are poorly calibrated by comparison — a Q30 Nanopore base behaves differently from a Q30 Illumina base — so DADA2 can discard up to 97% of reads. EMU uses alignment-based abundance estimation designed for Nanopore error profiles.
-
+Emu is a relative abundance estimator for 16S genomic sequences. The method is optimized for error-prone full-length reads, but can also be utilized for short-read data.
 ---
 
 ## Table of Contents
 
-1. [Installation](#1-installation)
-2. [Directory Setup](#2-directory-setup)
+1. [Directory Setup](#1-directory-setup)
+2. [Installation](#2-installation)
 3. [Running EMU](#3-running-emu)
 4. [Understanding the Output](#4-understanding-the-output)
 5. [Visualizing in R — Community Composition](#5-visualizing-in-r--community-composition)
@@ -19,50 +16,9 @@
 7. [Beta Diversity (Ordination)](#7-beta-diversity-ordination)
 
 ---
+## 1. Directory Setup
 
-## 1. Installation
-
-EMU runs on macOS and Linux. Conda is recommended because it handles the `minimap2` dependency automatically.
-
-### Option A — conda (recommended)
-
-```bash
-# Create a fresh environment
-conda create -n emu -c bioconda -c conda-forge emu
-conda activate emu
-
-# Verify install
-emu --version
-```
-
-### Option B — pip
-
-```bash
-pip install emu
-
-# minimap2 must be installed separately
-conda install -c bioconda minimap2
-# or on macOS:
-brew install minimap2
-```
-
-> **Dependency note:** EMU requires `minimap2` and `samtools`. Conda installs both automatically. If using pip on macOS, install minimap2 via Homebrew.
-
-### Download the EMU database
-
-```bash
-# Default EMU database (~8GB, based on SILVA + NCBI)
-emu download-db emu --dir ~/databases/emu-db
-
-# Or use the smaller SILVA-only database (~3GB)
-emu download-db silva --dir ~/databases/silva-db
-```
-
----
-
-## 2. Directory Setup
-
-Organise your project before running EMU. Your fastq files should be in a `data/` folder.
+Organise your project before running EMU. 
 
 ### Expected structure
 
@@ -77,16 +33,74 @@ Organise your project before running EMU. Your fastq files should be in a `data/
 │   ├── Sediment_2.fastq
 │   ├── Water_1.fastq
 │   └── Water_2.fastq
-├── results/       ← will be created
-└── figures/       ← will be created
-```
+├── results/     
+└── figures/      
+└── db/      
 
-### Create output directories
+```
+### Create data folder, database folder, and output directories
+```
+cd ~/Desktop/2026-MicroEco16S
+```
+```
+mkdir -p data db results figures
+```
+Download fastq files from canvas
+
+## 2. Installation
+
+EMU runs on macOS and Linux. To install it we will use Conda. It is the recommended package installer for most workflows. It installs all packages and dependecies. Conda itself is already installed on your computers. 
+
+### Conda
 
 ```bash
-cd ~/Desktop/2026-MicroEco16S
-mkdir -p results figures
+conda create -n emu -c bioconda -c conda-forge emu python=3.7
 ```
+
+It will ask you to `Proceed ([y]/n)?`, press `y` and `enter`
+
+Now activate the environment to be able to use the program `emu`. 
+```bash
+conda activate emu
+```
+
+# Verify install
+```
+emu --version
+```
+
+### Download the EMU database
+
+```bash
+pip install osfclient
+```
+```
+cd db/
+```
+```
+pwd
+```
+Export path. Copy and paste `pwd` the path 
+```
+export EMU_DATABASE_DIR="/Users/morgansobol/Desktop/2026-MicroEco16S/db"
+```
+```
+osf -p 32sh5 fetch osfstorage/species_taxid.fasta
+```
+```
+osf -p 32sh5 fetch osfstorage/taxonomy.tsv
+```
+
+Check the files are in your `db` directory
+```
+ls
+```
+
+---
+
+## 3. Running EMU
+
+EMU aligns reads against its 16S database using minimap2 and estimates taxon abundances. Run all samples with a simple loop.
 
 ### Check read counts before running
 
@@ -98,17 +112,15 @@ done
 
 > **Low-read samples:** If any samples have fewer than ~100 reads (e.g. Rock samples), EMU will still run but results will be unreliable. Flag these in your analysis and interpret with caution.
 
----
-
-## 3. Running EMU
-
-EMU aligns reads against its 16S database using minimap2 and estimates taxon abundances. Run all samples with a simple loop.
-
 ### Run all samples
 
-```bash
-cd ~/Desktop/2026-MicroEco16S
-
+Go back one dirctory to main `2026-MicroEco16S/` directory
+```
+cd ../
+```
+```
+emu abundance --db ${EMU_DATABASE_DIR} *.fastq
+```
 for f in data/*.fastq; do
   # Extract sample name (e.g. Plant_1)
   sample=$(basename "$f" .fastq)
