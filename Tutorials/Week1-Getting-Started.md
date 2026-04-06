@@ -108,7 +108,7 @@ Summary of commands used:
 | cd ..                               | Go back one directory                                                             |
 
 
-## 🧪 Exercise 2: Creating directories and files + 
+## 🧪 Exercise 2: Creating and editing directories + files  
 > [!WARNING]
 > Using commands that do things like create, copy, and move files at the command line will <ins>**overwrite**</ins> files if they have the same name. And using commands that delete things will do so <ins>**permanently**</ins>. Use caution using these commands.
 
@@ -142,6 +142,28 @@ touch sample1.txt
 >This is just a convention, albeit an important one. Files contain bytes: it’s up to us and our programs to interpret those bytes according to the rules for plain text files, PDF documents, configuration files, images, and so on.
 >Naming a PNG image of a whale as whale.mp3 doesn’t somehow magically turn it into a recording of whalesong, though it might cause the operating system to try to open it with a music player when someone double-clicks it.
 
+
+It is often very useful to be able to generate new plain-text files quickly at the command line, or make some changes to an existing one. One way to do this is using a text editor that operates at the command line. Here we’re going to look at one program that does this called `nano`. Let's test it with a file that already exists.
+```bash
+nano sample1.txt
+```
+
+This will open up an interface and allow you to add text. Add two sample names, A and B.
+```bash
+sample_A
+sample_B
+```
+To save the file and exit, we need to use some of the keyboard shortcuts listed on the bottom. Type "ctrl" + "x". It will ask if you want to save, type "y" and then press "enter". 
+
+To get a "sneak-peak" at what we added in the sample1.txt file, we can either use the `head` command to show the top of the file contents. There is also `tail`, which prints the last 10 lines of a file by default:
+```bash
+head sample1.txt
+```
+There are a few other options to view files.
+For example, the command `less` lets you scroll through a file but not edit it. Try it out on `sample1.txt`. (To exit the `less` command, just press `q`. 
+
+The command `cat` will display the whole file at once, so it is better to use for shorter files.
+Try it out too `sample1.txt` file.
 
 Lets <ins>c</ins>o<ins>p</ins>y the file and rename it. The first file called is the file you want to copy, the second is what you want to name the copy.
 ```bash
