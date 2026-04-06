@@ -146,18 +146,24 @@ cd ../
 EMU aligns reads against its 16S database using minimap2 and estimates taxon abundances. 
 
 ### Run all samples at once using a `for` loop
-A `for` loop is a programming control structure used to execute a block of code repeatedly. Here, we are defining 
+A `for` loop is a programming control structure used to execute a block of code repeatedly. Here, we are telling the computer: "For every .fastq file in the data/ folder, run the emu abundance command on it."
+We are creating a variable called `sample` to store the name of each file, without the folder path or the .fastq ending.
+For example, if `$f` is data/Plant_1.fastq, then:
+
+`basename` strips the folder path → Plant_1.fastq
+`.fastq` tells it to also remove the extension → Plant_1
+So `sample` becomes Plant_1
+
+We then use `$sample` to name the output folder: results/Plant_1, results/Plant_2, etc. — keeping each sample's results neatly separated.
+
+Then we run emu on each sample, provide the path to the database, and set threads=6 (i.e. to use 6 computer nodes). 
 
 ```bash
 for f in data/*.fastq; do
   # Extract sample name (e.g. Plant_1)
   sample=$(basename "$f" .fastq)
 
-  emu abundance "$f" \
-    --db ~/databases/emu-db \
-    --type map-ont \
-    --output-dir results/"$sample" \
-    --threads 4
+  emu abundance "$f" --db db/ --threads 6
 done
 ```
 
