@@ -64,10 +64,10 @@ cd Desktop/
 ```
 
 Now, use `pwd` and `ls` to see where you are and what is there.
-```
+```bash
 pwd
 ```
-```
+```bash
 ls
 ```
 What do you see? 
@@ -77,10 +77,10 @@ To move back one directory to _home_ (i.e. root directory), simply use `..` like
 cd ..
 ```
 Now, use `pwd` and `ls` to see where you are and what is there.
-```
+```bash
 pwd
 ```
-```
+```bash
 ls
 ```
 What do you see? 
@@ -117,10 +117,10 @@ Start with <ins>m</ins>a<ins>k</ins>ing a new <ins>dir</ins>ectory, using the `m
 ```bash
 mkdir 2026-MicroEco16S
 ```
-```
+```bash
 cd 2026-MicroEco16S
 ```
-```
+```bash
 ls
 ```
 Are you in 2026-MicroEco16S?
@@ -147,7 +147,7 @@ Lets <ins>c</ins>o<ins>p</ins>y the file and rename it. The first file called is
 ```bash
 cp sample1.txt copy_sample1.txt
 ```
-```
+```bash
 ls
 ```
 
@@ -162,31 +162,31 @@ mv copy_sample1.txt copies/
 ```
 
 Let's see if we did that right using `ls`.
-```
+```bash
 ls copies/
 ```
 
 Lets get rid of the renamed file. To <ins>r</ins>e<ins>m</ins>ove files, use the `rm` command. First, go into the `copies` directory.
-```
+```bash
 cd copies/
 ```
 > [!TIP]
 > When starting out, especially, it might be a better practice to use the -i flag with `rm`. This will prompt the terminal to first ask permission before you delete something.
-```
+```bash
 rm -i copy_sample1.txt
 ```
-```
+```bash
 ls
 ```
 
 You can also remove entire directories. Let's remove the `copies/` directory using `-r` flag.
-```
+```bash
 cd ..
 ```
-```
+```bash
 rm -r copies/
 ```
-```
+```bash
 ls
 ```
 Commands used and other flags
