@@ -2,7 +2,7 @@
 ### A tutorial for Nanopore full-length 16S amplicon data
 
 ---
-Emu is a relative abundance estimator for 16S genomic sequences. The method is optimized for error-prone full-length reads, but can also be utilized for short-read data.
+#### Emu is a relative abundance estimator for 16S genomic sequences. The method is optimized for error-prone full-length reads, but can also be utilized for short-read data.
 ---
 
 ## Table of Contents
@@ -38,18 +38,59 @@ Organise your project before running EMU.
 └── db/      
 
 ```
-### Create data folder, database folder, and output directories
-```
-cd ~/Desktop/2026-MicroEco16S
-```
-```
-mkdir -p data db results figures
-```
-Download fastq files from canvas
+### Create database folder and output directories
 
-## 2. Installation
+You should be in the `2026-MicroEco16S` directory, if not move there with `cd`. 
 
-EMU runs on macOS and Linux. To install it we will use Conda. It is the recommended package installer for most workflows. It installs all packages and dependecies. Conda itself is already installed on your computers. 
+Make new directories to hold our database and to output figures. Emu will create the `results/` directory for us. 
+
+```bash
+mkdir -p db figures
+```
+```bash
+ls
+```
+
+Get the `data/` directory from Canvas. Choose to download it to `2026-MicroEco16S` if you can. If it goes automatically to `Downloads` don't fret, we can move it here, like so:
+```bash
+mv ../../Downloads/data.zip .
+```
+With this command, I moved the files from a few directories back and placed it in our current location (i.e. `2026-MicroEco16S`) using the `.` to signify "here".
+
+Now `unzip` the zip file.
+```bash
+unzip data.zip
+```
+```bash
+ls data/
+```
+You should now see your fastq files in `data/`. 
+
+Let's take a look at one using the `head` command.
+```bash
+head data/Plant_1.fastq
+```
+
+The fastq format has 4 lines per sequence: 
+* the sequence identifier (header), preceded by a “@” character;
+* the nucleic acid sequence itself;
+* a “+” character and possibly the header information repeated;
+* and the quality score information for each individual basecall, which must contain the same number of characters as letters in the sequence. 
+
+![Breakdown of a fastq file](https://github.com/user-attachments/assets/e7a64482-ccae-4ee4-99a8-4bb83141b448)
+
+### Now, let's check read counts before running.
+We will use the command `grep` which is a command-line utility for searching text for lines that match a specific character or string of text. Here, we will search for "@" which signifies a new sequence in the file. 
+```bash
+grep -c '^@' data/*.fastq
+```
+
+> **Low-read samples:** If any samples have fewer than ~100 reads (e.g. Rock samples), EMU will still run but results will be unreliable. Flag these in your analysis and interpret with caution.
+
+
+## 2. Installation of Emu
+
+EMU runs on macOS and Linux. To install it we will use the package manager Conda. It is the recommended package installer for most workflows. It installs all packages and dependecies. Conda itself is already installed on your computers. 
 
 ### Conda
 
@@ -69,58 +110,45 @@ conda activate emu
 emu --version
 ```
 
-### Download the EMU database
+### Download the EMU database using osf client
+
+Now we need to download a separate package using `pip` that will help us download the database. 
 
 ```bash
 pip install osfclient
 ```
-```
+
+We want to download the database in the `db/` folder, so move there first. 
+```bash
 cd db/
 ```
-```
-pwd
-```
-Export path. Copy and paste `pwd` the path 
-```
-export EMU_DATABASE_DIR="/Users/morgansobol/Desktop/2026-MicroEco16S/db"
-```
-```
+```bash
 osf -p 32sh5 fetch osfstorage/species_taxid.fasta
 ```
-```
+```bash
 osf -p 32sh5 fetch osfstorage/taxonomy.tsv
 ```
 
 Check the files are in your `db` directory
-```
+```bash
 ls
+```
+
+Go back one directory to main `2026-MicroEco16S/` directory
+```bash
+cd ../
 ```
 
 ---
 
 ## 3. Running EMU
 
-EMU aligns reads against its 16S database using minimap2 and estimates taxon abundances. Run all samples with a simple loop.
+EMU aligns reads against its 16S database using minimap2 and estimates taxon abundances. 
 
-### Check read counts before running
+### Run all samples at once using a `for` loop
+A `for` loop is a programming control structure used to execute a block of code repeatedly. Here, we are defining 
 
 ```bash
-for f in data/*.fastq; do
-  echo "$f: $(grep -c '^@' $f) reads"
-done
-```
-
-> **Low-read samples:** If any samples have fewer than ~100 reads (e.g. Rock samples), EMU will still run but results will be unreliable. Flag these in your analysis and interpret with caution.
-
-### Run all samples
-
-Go back one dirctory to main `2026-MicroEco16S/` directory
-```
-cd ../
-```
-```
-emu abundance --db ${EMU_DATABASE_DIR} *.fastq
-```
 for f in data/*.fastq; do
   # Extract sample name (e.g. Plant_1)
   sample=$(basename "$f" .fastq)
