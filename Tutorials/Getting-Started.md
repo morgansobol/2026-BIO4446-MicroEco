@@ -161,9 +161,12 @@ head sample1.txt
 ```
 There are a few other options to view files.
 For example, the command `less` lets you scroll through a file but not edit it. Try it out on `sample1.txt`. (To exit the `less` command, just press `q`. 
+```bash
+less sample1.txt
+```
 
 The command `cat` will display the whole file at once, so it is better to use for shorter files.
-Try it out too `sample1.txt` file.
+Try it out too `sample1.txt` file if you'd like.
 
 Lets <ins>c</ins>o<ins>p</ins>y the file and rename it. The first file called is the file you want to copy, the second is what you want to name the copy.
 ```bash
