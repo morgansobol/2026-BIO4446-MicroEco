@@ -203,6 +203,11 @@ bash emu.sh
 Now, this is going to take ~15-25 min. In the meantime, take a break or play more on the Terminus game. 
 https://github.com/morgansobol/2026-BIO4446-MicroEco/blob/main/Tutorials/Getting-Started.md#-exercise-4-terminus-game 
 
+Once it is done, check that the output is in `results/`.
+```bash
+ls -l results/
+```
+
 ### Combine all samples into one table
 
 ```bash
