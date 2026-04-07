@@ -152,7 +152,7 @@ ls
 
 Go back one directory to main `2026-MicroEco16S/` directory
 ```bash
-cd ../
+cd ..
 ```
 
 ---
