@@ -208,7 +208,7 @@ Once it is done, check that the output is in `results/`.
 ls -l results/
 ```
 
-### Combine all samples into one table
+### Combine all samples into one table at the species level
 
 ```bash
 emu combine-outputs results/ species
