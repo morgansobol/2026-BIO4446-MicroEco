@@ -59,6 +59,13 @@ I prefer to add -lh, the "h" prints the sizes in a <ins>h</ins>uman-readable for
 ls -lh
 ```
 
+> [!TIP]
+> On Linux and Mac, the `man` command is used to show the **manual** of any command that you can run in the terminal. So if you wanted to know more about the `ls` command, you could run:
+
+```bash
+  man ls
+```
+
 Ok, lets move into into the Desktop directory using the `cd` command. 
 
 ```bash
