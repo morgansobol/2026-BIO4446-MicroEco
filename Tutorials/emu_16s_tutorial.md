@@ -172,7 +172,7 @@ So `sample` becomes Plant_1
 
 We then use `$sample` to name the output folder: results/Plant_1, results/Plant_2, etc. — keeping each sample's results neatly separated.
 
-Then we run emu on each sample, provide the path to the database, and set threads=6 (i.e. to use 6 computer nodes). 
+Then we run emu on each sample, provide the path to the database, and set `threads=4` (i.e. to use 4 computer nodes). 
 
 We will run the `for` loop below from a `bash` script, let's make that. 
 
@@ -190,7 +190,7 @@ for f in data/*.fastq; do
   # Extract sample name (e.g. Plant_1)
   sample=$(basename "$f" .fastq)
 
-  emu abundance "$f" --db db/ --threads 6
+  emu abundance "$f" --db db/ --threads 4
 done
 ```
 A shebang (#!) is the first line in a script, starting with #!, that tells the operating system which interpreter (e.g., bash) to use to execute the file. 
