@@ -5,6 +5,7 @@
 #### Emu is a relative abundance estimator for 16S genomic sequences. The method is optimized for error-prone full-length reads, but can also be utilized for short-read data.
 
 Link to paper here: https://doi.org/10.1038/s41592-022-01520-4
+Link to Youtube that better explains Emu: https://www.youtube.com/watch?v=ySt5zIPEb10
 
 
 <img width="1520" height="736" alt="image" src="https://github.com/user-attachments/assets/a1787e46-da57-436d-bc46-d59146a4e7dd" />
