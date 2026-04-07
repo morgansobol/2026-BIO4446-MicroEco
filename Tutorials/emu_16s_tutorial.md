@@ -179,7 +179,7 @@ So `sample` becomes Plant_1
 
 We then use `$sample` to name the output folder: results/Plant_1, results/Plant_2, etc. — keeping each sample's results neatly separated.
 
-Then we run emu on each sample, provide the path to the database, and set `threads=4` (i.e. to use 4 computer nodes). 
+Then we run emu on each sample, provide the path to the database, tell it that we want to output raw counts alongside relative abundances, and set `threads=4` (i.e. to use 4 computer nodes). 
 
 We will run the `for` loop below from a `bash` script, let's make that. 
 
@@ -198,7 +198,7 @@ for f in data/*.fastq; do
   # Extract sample name (e.g. Plant_1)
   sample=$(basename "$f" .fastq)
 
-  emu abundance "$f" --db db/ --threads 4
+  emu abundance "$f" --db db/ --keep-counts --threads 4
 done
 ```
 A shebang (#!) is the first line in a script, starting with #!, that tells the operating system which interpreter (e.g., bash) to use to execute the file. 
@@ -216,11 +216,19 @@ Once it is done, check that the output is in `results/`.
 ls -l results/
 ```
 
-### Combine all samples into one table at the species level
+### Combine all samples into one table at the species level.
 
+First table will be raw counts. 
+```bash
+emu combine-outputs --counts results/ species
+```
+*Estimated read counts are based on likelihood probabilities and therefore may not be integer values. They are calculated as the product of estimated relative abundance and total classified reads. 
+
+Second table will be relative abundances. 
 ```bash
 emu combine-outputs results/ species
 ```
+
 ---
 Congrats!! You now have your species table. Let's take a look at the file outside of the terminal. 
 
