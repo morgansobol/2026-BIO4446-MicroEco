@@ -101,6 +101,11 @@ We will use the command `grep` which is a command-line utility for searching tex
 grep -c '^@' data/*.fastq
 ```
 
+If you want to know more about `grep`, remember you can use `man`:
+```bash
+man grep
+```
+
 > **Low-read samples:** If any samples have fewer than ~100 reads (e.g. Rock samples), EMU will still run but results will be unreliable. Flag these in your analysis and interpret with caution.
 
 
