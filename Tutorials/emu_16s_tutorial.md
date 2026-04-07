@@ -195,7 +195,12 @@ done
 ```
 A shebang (#!) is the first line in a script, starting with #!, that tells the operating system which interpreter (e.g., bash) to use to execute the file. 
 
-Now, this is going to take ~15-25 min. In the meantime, take a break or work on the Terminus game
+To run this `bash` script, we use `bash` command:
+```bash
+bash emu.sh
+```
+
+Now, this is going to take ~15-25 min. In the meantime, take a break or play more on the Terminus game. 
 https://github.com/morgansobol/2026-BIO4446-MicroEco/blob/main/Tutorials/Getting-Started.md#-exercise-4-terminus-game 
 
 ### Combine all samples into one table
