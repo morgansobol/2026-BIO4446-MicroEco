@@ -4,19 +4,21 @@ This week, you'll get comfortable using the Unix command line, which is an essen
 
 ---
 
-Let's establish some basics first. 
+## Let's establish some basics first. 
 
-Linux and Mac users will find a Terminal program already installed on their computers. If you are using windows, I recommend downloading MobaXTerm (https://mobaxterm.mobatek.net/), but other software is available. We can also get you set up on your personal computer later if you own a Window/PC. 
+Unix (the "OG" operating system, found in Macs) and Linux (Unix-like) users will find a `Terminal` app already installed on their computers. If you are using Windows, I recommend downloading MobaXTerm (https://mobaxterm.mobatek.net/), but other software is available. We can also get you set up on your personal computer later if you own a Window/PC. Most bioinformatic software is written for Unix/Linux, which is why Window users need extra tools to use these programs. 
 
-Now, the _Terminal_ is a text input and output environment where we can type commands and see the output. In other words, it is the "window" in which you enter the actual commands and those commands are interpreted and run by a _Shell_. 
+Now, the `_terminal_` is a text input and output environment where we can type commands and see the output. In other words, it is the "window" in which you enter the actual commands and those commands are interpreted and run by a `_shell_`. 
 
-So the _Shell_ is the program inside the terminal that actually processes commands and returns the output. In most Linux and Mac operating systems, it uses a _Bash_ shell, which is essentially its own programming language and what we will use below. 
+The `shell` is the program inside the `terminal` that actually processes commands and returns the output. In most Linux and Unix (Mac) operating systems, it uses a `_bash_` shell, which is essentially its own programming language and what we will use below. 
 
-Different shells provide unique features and syntax: on macOS, the default is Zsh (formerly Bash) with Unix-style commands, while Windows primarily uses PowerShell and Command Prompt, with options to install Unix-like shells such as WSL or Git Bash.
+Different shells provide unique features and syntax: on macOS, the default is now Zsh (formerly Bash) with Unix-style commands, while Windows primarily uses PowerShell and Command Prompt, with options to install Unix-like shells such as WSL or Git Bash.
 
-In summary, think of it this way: Terminal is the TV and Shell is the program running the TV. 
+Think of it this way: the `terminal` is the drive-thru speaker, the `shell` is the person taking your order and relaying it to the kitchen, and the people in the kitchen cooking your meal are the `operating system`. 
 
+<img width="2754" height="1803" alt="image" src="https://github.com/user-attachments/assets/c2607657-3643-447d-be3f-69511845ae86" />
 
+## File structure 
 Computers store file locations in a hierarchical structure. We are typically already used to navigating through this stucture by clicking on various folders (also known as **directories**) in a Windows Explorer window or a Mac Finder window. Just like we need to select the appropriate files in the appropriate locations there (in a Graphical User-Interface, or GUI), we need to do the same when working at a command-line interface. What this means in practice is that each file and directory has its own “address”, and that address is called its “path”.
 
 Additionally, there are two special locations in all Unix-based systems, so two more terms we should become familiar with: the “root” location and the current user’s “home” location. “Root” is where the address system of the computer starts; “home” is where the current user’s location starts (this is where you should be now)
@@ -25,9 +27,9 @@ Additionally, there are two special locations in all Unix-based systems, so two 
 
 ## 🧪 Exercise 1: Navigating the Filesystem
 
-Ok, let's explore the basics.
+Ok, let's explore the terminal now. 
 
-Let's check where you are by <ins>p</ins>rinting your <ins>w</ins>orking <ins>d</ins>irectory (i.e. where you currently are in the system).
+Let's check where you are first by <ins>p</ins>rinting your <ins>w</ins>orking <ins>d</ins>irectory (i.e. where you currently are in the system).
 ```bash
 pwd
 ```
