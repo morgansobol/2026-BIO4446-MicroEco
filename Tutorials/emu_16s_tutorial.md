@@ -57,7 +57,7 @@ You should be in the `2026-MicroEco16S` directory, if not move there with `cd`.
 Make new directories to hold our database and to output figures. Emu will create the `results/` directory for us. 
 
 ```bash
-mkdir -p db figures
+mkdir db figures
 ```
 ```bash
 ls
