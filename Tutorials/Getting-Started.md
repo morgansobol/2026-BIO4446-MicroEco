@@ -1,6 +1,6 @@
 # Intro to Terminal and the Command Line
 
-This week, you'll get comfortable using the Unix command line, which is an essential skill for working with genomic data. 
+This week, you'll get comfortable using the Unix command line, which is an essential skill for working with sequence data. 
 
 ---
 
