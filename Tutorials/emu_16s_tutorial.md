@@ -10,7 +10,8 @@ Emu was given its name because it uses an expectation-maximization (EM) approach
 
 This algorithm is constructed upon the idea that an unclassified sequence is more likely to come from an organism that is expected to be in the sample at high abundance rather than an organism that is either detected in low abundance or not at all. 
 
-Emu first produces read classifications and a direct proportion community profile that is expected to have some inaccuracies due to error-prone sequences. The initial guess profile is then used to update the read classification likelihood giving more weight to higher abundance species. These updated read classification likelihoods then update the community profile directly. This process continues until only marginal changes are made to the community profile between iterations. A clean-up step is completed to remove low likelihood species and the final community profile estimation is ultimately returned.
+Emu first produces read classifications by mapping reads to a database of 16S sequences and a direct proportion community profile that is expected to have some inaccuracies due to error-prone sequences. The initial guess profile is then used to update the read classification likelihood giving more weight to higher abundance species. These updated read classification likelihoods then update the community profile directly. This process continues until only marginal changes are made to the community profile between iterations. A clean-up step is completed to remove low likelihood species and the final community profile estimation is ultimately returned.
+
 ---
 
 ## Table of Contents
