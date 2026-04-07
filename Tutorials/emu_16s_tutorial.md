@@ -63,7 +63,11 @@ mkdir db figures
 ls
 ```
 
-Get the `data/` directory from Canvas. Choose to download it to `2026-MicroEco16S` if you can. If it goes automatically to `Downloads` don't fret, we can move it here, like so:
+Get the `data/` directory from Canvas. Choose to download it to `2026-MicroEco16S` if you can. 
+```bash
+ls
+```
+Is it there? If not, it might have gone automatically to `Downloads`. Don't fret, we can move it here, like so:
 ```bash
 mv ../../Downloads/data.zip .
 ```
