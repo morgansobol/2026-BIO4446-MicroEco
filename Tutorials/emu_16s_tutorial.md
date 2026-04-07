@@ -4,6 +4,9 @@
 ---
 #### Emu is a relative abundance estimator for 16S genomic sequences. The method is optimized for error-prone full-length reads, but can also be utilized for short-read data.
 
+Link to paper here: https://doi.org/10.1038/s41592-022-01520-4
+
+
 <img width="1520" height="736" alt="image" src="https://github.com/user-attachments/assets/a1787e46-da57-436d-bc46-d59146a4e7dd" />
 
 Emu was given its name because it uses an expectation-maximization (EM) approach for microscopic (mu, 𝛍) organisms, yielding EM + mu or Emu for short. 
@@ -156,18 +159,29 @@ EMU aligns reads against its 16S database using minimap2 and estimates taxon abu
 
 ### Run all samples at once using a `for` loop
 A `for` loop is a programming control structure used to execute a block of code repeatedly. Here, we are telling the computer: "For every .fastq file in the data/ folder, run the emu abundance command on it."
-We are creating a variable called `sample` to store the name of each file, without the folder path or the .fastq ending.
-For example, if `$f` is data/Plant_1.fastq, then:
 
-`basename` strips the folder path → Plant_1.fastq
-`.fastq` tells it to also remove the extension → Plant_1
+We are creating a variable called `sample` to store the name of each file, without the folder path or the .fastq ending. For example, if `$f` is data/Plant_1.fastq, then:
+
+- `basename` strips the folder path → Plant_1.fastq
+- `.fastq` tells it to also remove the extension → Plant_1
 So `sample` becomes Plant_1
 
 We then use `$sample` to name the output folder: results/Plant_1, results/Plant_2, etc. — keeping each sample's results neatly separated.
 
 Then we run emu on each sample, provide the path to the database, and set threads=6 (i.e. to use 6 computer nodes). 
 
+We will run the `for` loop below from a `bash` script, let's make that. 
+
+A `bash` script is a file containing commands that you run in the terminal. They automate tasks and make your work more efficient. We give the file a `.sh` extension because we intend to exectute the scripts in ba_sh_.
+
+Creat the file:
 ```bash
+nano emu.sh
+```
+Copy and paste everything below into file:
+```bash
+#!/bin/bash
+
 for f in data/*.fastq; do
   # Extract sample name (e.g. Plant_1)
   sample=$(basename "$f" .fastq)
@@ -175,18 +189,9 @@ for f in data/*.fastq; do
   emu abundance "$f" --db db/ --threads 6
 done
 ```
+A shebang (#!) is the first line in a script, starting with #!, that tells the operating system which interpreter (e.g., bash) to use to execute the file. 
 
-### Key parameters
-
-| Flag | Value | Notes |
-|------|-------|-------|
-| `--type` | `map-ont` | Nanopore preset for minimap2. Do not use `map-pb` or `sr`. |
-| `--db` | path/to/db | Path to downloaded EMU database directory. |
-| `--threads` | 4 | MacBook Air has limited cores — 4 is safe. |
-| `--min-abundance` | 0.0001 | Optional. Filters taxa below 0.01% relative abundance. |
-| `--keep-files` | (flag) | Optional. Keeps intermediate sam/bam files for QC inspection. |
-
-> **Runtime estimate:** Each sample takes roughly 2–5 minutes on a MacBook Air with 4 threads, depending on read count.
+Now, this is going to take ~15-25 min. In the meantime, take a break and work on Terminus https://github.com/morgansobol/2026-BIO4446-MicroEco/blob/main/Tutorials/Getting-Started.md#-exercise-4-terminus-game 
 
 ### Combine all samples into one table
 
