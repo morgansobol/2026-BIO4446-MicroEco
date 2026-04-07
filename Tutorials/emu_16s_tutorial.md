@@ -200,5 +200,5 @@ https://github.com/morgansobol/2026-BIO4446-MicroEco/blob/main/Tutorials/Getting
 emu combine-outputs results/ species
 ```
 ---
-Congrats!! You now have your Let's take a look at the file outside of the terminal. 
+Congrats!! You now have your species table. Let's take a look at the file outside of the terminal. 
 
