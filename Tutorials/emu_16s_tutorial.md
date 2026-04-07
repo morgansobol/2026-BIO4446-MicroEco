@@ -144,13 +144,15 @@ We want to download the database in the `db/` folder, so move there first.
 cd db/
 ```
 ```bash
-osf -p 32sh5 fetch osfstorage/species_taxid.fasta
-```
-```bash
-osf -p 32sh5 fetch osfstorage/taxonomy.tsv
+osf -p 56uf7 fetch osfstorage/emu-prebuilt/emu.tar
 ```
 
-Check the files are in your `db` directory
+This downloads a `tar` file, its another type of compression, like `zip`. To unzip or "untar" it, we do:
+```bash
+tar -xvf emu.tar
+```
+
+Check the .fasta and .tsv files are in your `db` directory
 ```bash
 ls
 ```
@@ -187,7 +189,8 @@ Creat the file:
 ```bash
 nano emu.sh
 ```
-Copy and paste everything below into file:
+
+Copy and paste everything below into the file:
 ```bash
 #!/bin/bash
 
