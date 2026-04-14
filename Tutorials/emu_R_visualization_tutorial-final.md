@@ -3,7 +3,7 @@
 
 ---
 
-This tutorial uses two files you already have:
+This tutorial uses two files you should have:
 
 | File | Description |
 |------|-------------|
@@ -53,6 +53,11 @@ library(RColorBrewer)
 ---
 
 ## 2. Load Your Data
+
+First need to set your working directory to `2026-MicroEco`older we created last week. 
+```r
+setwd("/user/student/Desktop/2026-MicroEco16S/")
+```
 
 ```r
 # Load Data ---------------------------------------------------------------
