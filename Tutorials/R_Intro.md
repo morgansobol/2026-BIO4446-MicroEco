@@ -1,5 +1,6 @@
-# Intro to R
+# Intro to R Studio
 
+R is a free, open-source programming language designed for statistical computing and data visualization, while RStudio is an Integrated Development Environment that provides a user-friendly interface for writing and managing R code. 
  
 <img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/a5f776e1-55a7-47f2-b541-104df7262122" />
 
