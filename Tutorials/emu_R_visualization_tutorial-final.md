@@ -220,7 +220,16 @@ ggsave("figures/bar_chart_phylum.png",p_bar, width = 10, height = 5,  dpi = 300)
 
 ## 5. Alpha Diversity
 
-Alpha diversity measures richness and evenness **within** each sample.
+**Alpha diversity** describes the diversity within a single community/sample. It considers the number of different species in that sample (also referred to as species richness). Additionally, it can take the abundance of each species into account to measure how evenly taxa are distributed across the sample (also referred to as species evenness). 
+
+* Shannon's = Measures _diversity_ as both richness and evenness (relative proportions of our ASVs). The value increases as you add more taxa, even if they are rare.
+* Simpson's = also measures both richness and evenness, but weights more on dominant taxa and is less sensitive to rare ones. 1 = very even; close to 0 = one or a few taxa dominate.
+
+To compare alpha diversity across samples, would be to ask if the mean or median of these calculated indices differs across groups.
+
+> [WARNING!]
+> These are just some metrics to help compare & contrast our samples within an experiment, and should **not** be considered “true” values of any ASV.
+
 
 > **Note on input format:** phyloseq's `estimate_richness()` expects integer read counts, but EMU outputs relative abundances. We scale up by 10,000 and round to create pseudo-counts. This preserves the rank order of diversity while satisfying phyloseq's requirements.
 
@@ -257,7 +266,14 @@ ggsave("figures/alpha_diversity.png", p_alpha_all,  width = 10, height = 6,  dpi
 
 ## 6. Beta Diversity (PCoA)
 
-Beta diversity shows how **different** communities are between samples. Bray-Curtis ranges from 0 (identical) to 1 (completely different).
+**Beta diversity**, also called "between-sample diversity", is a measurement of the distance, or difference, between samples. It involves calculating metrics such as distances or dissimilarities based on pairwise comparisons of samples so we can relate samples to each other. What stats do for us is determine the overall variation in the distance matrix and test whether groups of samples differ in community composition. 
+
+Typically, you would generate some exploratory visualizations like ordinations and hierarchical clusterings for an overview of how your samples relate to each other. 
+
+We’re going to use Bray-Curtis dissimilarity to cluster samples that are similar to one another based on ASV profiles. 
+Bray-curtis looks at shared abundance of ASVs between two samples. 
+> If samples share many taxa with similar abundances → low dissimilarity (close to 0).
+> If they have very different taxa or very different abundances → high dissimilarity (close to 1)
 
 ```r
 bray_dist <- phyloseq::distance(ps, method = "bray")
