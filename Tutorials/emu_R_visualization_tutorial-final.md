@@ -22,8 +22,6 @@ The EMU file has taxonomy columns (`species`, `genus`, `family`, `order`, `class
 4. [Relative Abundance Bar Chart](#4-relative-abundance-bar-chart)
 5. [Alpha Diversity](#5-alpha-diversity)
 6. [Beta Diversity (PCoA)](#6-beta-diversity-pcoa)
-7. [Differential Abundance with ANCOMBC2](#7-differential-abundance-with-ancombc2)
-8. [Save All Plots](#8-save-all-plots)
 
 ---
 
@@ -286,117 +284,6 @@ ggsave("figures/beta_diversity_pcoa.png",p_pcoa,width = 7,height = 5,  dpi = 300
 > - Sediment replicates are more spread apart (~0.47), driven by Sediment_2's unusually high diversity
 > - Rock replicates are completely dissimilar (BC = 1.0) — Rock_1 and Rock_2 share zero species, almost certainly a low-read-depth artefact in Rock_1
 
-### 6.2 PERMANOVA — does environment type explain community composition?
 
-```r
-otu_for_perm <- t(as(otu_table(ps), "matrix"))
-meta_aligned  <- as(sample_data(ps), "data.frame")
+~Fin~
 
-set.seed(42)
-permanova_result <- adonis2(
-  otu_for_perm ~ Type,
-  data         = meta_aligned,
-  method       = "bray",
-  permutations = 999
-)
-
-print(permanova_result)
-```
-
-> **Caution:** With only 2 replicates per group (8 total), PERMANOVA has very low statistical power. A significant result is still informative, but a non-significant result should not be taken as evidence that environment types have the same community.
-
----
-
-## 7. Differential Abundance with ANCOMBC2
-
-ANCOMBC2 identifies taxa that differ significantly between groups, correcting for compositionality bias. We run it at genus level to increase statistical power.
-
-```r
-# Scale relative abundances to pseudo-counts for ANCOMBC2
-ps_counts <- transform_sample_counts(ps, function(x) round(x * 10000))
-
-set.seed(42)
-ancom_result <- ancombc2(
-  data         = ps_counts,
-  tax_level    = "genus",
-  fix_formula  = "Type",
-  p_adj_method = "BH",
-  verbose      = FALSE
-)
-
-res_df <- ancom_result$res
-
-# Show genera significant in at least one comparison (q < 0.05)
-sig_genera <- res_df %>%
-  filter(if_any(starts_with("q_"), ~ . < 0.05))
-
-cat("Significant genera found:", nrow(sig_genera), "\n")
-```
-
-### Visualise log-fold changes
-
-The reference group is the first level alphabetically — `Plant` by default. All comparisons are relative to Plant.
-
-```r
-lfc_long <- res_df %>%
-  filter(taxon %in% sig_genera$taxon) %>%
-  select(taxon, starts_with("lfc_")) %>%
-  pivot_longer(
-    cols      = starts_with("lfc_"),
-    names_to  = "comparison",
-    values_to = "lfc"
-  ) %>%
-  mutate(comparison = str_remove(comparison, "lfc_Type"))
-
-p_ancom <- ggplot(lfc_long, aes(x = lfc, y = reorder(taxon, lfc), fill = comparison)) +
-  geom_col(position = "dodge") +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey40") +
-  scale_fill_brewer(palette = "Set1") +
-  labs(
-    title    = "Differential Abundance (ANCOMBC2)",
-    subtitle = "Log-fold change vs. Plant (reference); q < 0.05",
-    x = "Log-Fold Change", y = "Genus", fill = "vs. Plant"
-  ) +
-  theme_bw(base_size = 11)
-
-p_ancom
-```
-
-> With only 8 samples, expect few significant hits. Treat trends in LFC as hypothesis-generating rather than confirmatory.
-
----
-
-## 8. Save All Plots
-
-```r
-ggsave("bar_chart_phylum.pdf",       p_bar,       width = 10, height = 5)
-ggsave("alpha_diversity.pdf",        p_alpha_all, width = 8,  height = 4)
-ggsave("beta_diversity_pcoa.pdf",    p_pcoa,      width = 7,  height = 5)
-ggsave("differential_abundance.pdf", p_ancom,     width = 9,  height = 5)
-
-# Or combine into one multi-panel figure
-combined <- (p_bar) /
-            (p_alpha_all | p_pcoa) +
-  plot_annotation(
-    title   = "Environmental Microbiome — EMU 16S Analysis",
-    caption = "8 samples: Plant, Rock, Water, Sediment (2 replicates each)"
-  )
-
-ggsave("combined_figure.pdf", combined, width = 12, height = 14)
-```
-
----
-
-## Data notes for interpretation
-
-| Observation | Likely explanation |
-|-------------|-------------------|
-| Rock_1 has only 6 detected species | Very low read depth — interpret with caution |
-| Rock_1 and Rock_2 share no species (BC = 1.0) | Consequence of low reads in Rock_1 |
-| Sediment_2 has 245 species vs. 50 in Sediment_1 | Genuine biological heterogeneity or sequencing depth difference |
-| Plant replicates cluster tightly (BC = 0.18) | Consistent Cyanobacteria-dominated biofilm community |
-| Dominant phyla: Proteobacteria + Cyanobacteria | Expected for phototrophic environmental surface samples |
-
----
-
-*Validated with `emu-combined-species.tsv` (336 species, 8 samples) and `metadata.csv`.*
