@@ -40,14 +40,6 @@ install.packages(c(
   "RColorBrewer"
 ))
 
-# Bioconductor packages
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install(c(
-  "phyloseq",
-  "ANCOMBC"
-))
 ```
 
 Load for each session:
@@ -58,7 +50,6 @@ library(phyloseq)
 library(vegan)
 library(patchwork)
 library(RColorBrewer)
-library(ANCOMBC)
 ```
 
 ---
@@ -66,21 +57,36 @@ library(ANCOMBC)
 ## 2. Load Your Data
 
 ```r
+# Load Data ---------------------------------------------------------------
+
 # Load the EMU combined output
-emu <- read_tsv("emu-combined-species.tsv")
+emu <- read_tsv("./results-og/emu-combined-species.tsv")
 
 # Load metadata
 meta <- read_csv("metadata.csv")
 
+# See correct import of files
 head(emu)
-# species | genus | family | ... | Rock_1 | Water_1 | Plant_2 | ...
 
 head(meta)
-# Sample     | Type
-# Water_1    | Water
-# Plant_1    | Plant
-# Sediment_1 | Sediment
-# Rock_1     | Rock
+```
+Define your sample names as a list for convenience in plotting
+
+```R
+sample_cols <- c("Rock_1", "Rock_2", "Water_1", "Water_2",
+                 "Plant_1", "Plant_2", "Sediment_1", "Sediment_2")
+```
+
+Clean up data, remove blanks and NAs
+```R
+emu_clean <- emu %>%
+  filter(!is.na(species)) %>%
+  mutate(
+    genus  = if_else(is.na(genus),  paste0("unclassified_", family), genus),
+    family = if_else(is.na(family), paste0("unclassified_", order),  family),
+    order  = if_else(is.na(order),  paste0("unclassified_", class),  order),
+    class  = if_else(is.na(class),  paste0("unclassified_", phylum), class)
+  )
 ```
 
 Define sample names for convenience:
@@ -94,14 +100,14 @@ sample_cols <- c("Rock_1", "Rock_2", "Water_1", "Water_2",
 
 ## 3. Build a Phyloseq Object
 
+Phyloseq is an R package to import, store, analyze, and graphically display complex phylogenetic sequencing data that has already been clustered into OTUs or ASVs. It leverages and builds upon many of the tools available in R for ecology and phylogenetic analysis (vegan, ade, ape), while also using advanced/flexible graphic systems (ggplot2) to easily produce publication-quality graphics. Check out more, including tutorials on what else it can do: https://joey711.github.io/phyloseq/
+
 Phyloseq keeps your abundance table, taxonomy, and metadata in one tidy object for analysis and plotting.
 
 ### 3.1 OTU matrix
 
-NAs in the EMU file mean a taxon was absent in that sample. Replace with 0.
-
 ```r
-otu_mat <- emu %>%
+otu_mat <- emu_clean %>%
   select(species, all_of(sample_cols)) %>%
   mutate(across(all_of(sample_cols), ~replace_na(.x, 0))) %>%
   column_to_rownames("species") %>%
@@ -113,7 +119,7 @@ dim(otu_mat)  # 336 taxa x 8 samples
 ### 3.2 Taxonomy table
 
 ```r
-tax_mat <- emu %>%
+tax_mat <- emu_clean %>%
   select(species, genus, family, order, class, phylum, superkingdom) %>%
   column_to_rownames("species") %>%
   as.matrix()
@@ -125,7 +131,8 @@ The metadata `Sample` column matches the EMU column names exactly (`Rock_1`, `Wa
 
 ```r
 meta_df <- meta %>%
-  column_to_rownames("Sample")
+  column_to_rownames("Sample") %>%
+  mutate(Sample = rownames(.))    
 
 # Confirm names match
 all(rownames(meta_df) %in% colnames(otu_mat))  # should be TRUE
@@ -141,10 +148,6 @@ ps <- phyloseq(
 )
 
 ps
-# phyloseq-class experiment-level object
-# otu_table()   OTU Table:      [ 336 taxa and 8 samples ]
-# sample_data() Sample Data:    [ 8 samples by 1 variable ]
-# tax_table()   Taxonomy Table: [ 336 taxa by 7 taxonomic ranks ]
 ```
 
 ---
@@ -153,39 +156,42 @@ ps
 
 ### 4.1 Aggregate to phylum level
 
-There are 19 phyla in this dataset. We collapse anything below 1% mean abundance into "Other" to keep the plot readable.
 
 ```r
 ps_phylum <- tax_glom(ps, taxrank = "phylum")
 ps_rel    <- transform_sample_counts(ps_phylum, function(x) x / sum(x))
 
 df_bar <- psmelt(ps_rel) %>%
-  rename(Phylum = phylum) %>%
-  mutate(Phylum = ifelse(Abundance < 0.01, "Other (< 1%)", Phylum))
+  rename(Phylum = phylum)  
 ```
 
 ### 4.2 Plot
 
 ```r
-# Manually assign colours to the dominant phyla in this dataset
 pal <- c(
-  "Proteobacteria"  = "#4E79A7",
-  "Cyanobacteria"   = "#59A14F",
-  "Bacteroidetes"   = "#F28E2B",
-  "Firmicutes"      = "#E15759",
-  "Acidobacteria"   = "#B07AA1",
-  "Other (< 1%)"    = "#BAB0AC"
+  "Proteobacteria"     = "#4E79A7",
+  "Cyanobacteria"      = "#59A14F",
+  "Bacteroidetes"      = "#F28E2B",
+  "Firmicutes"         = "#E15759",
+  "Acidobacteria"      = "#B07AA1",
+  "Nitrospirae"        = "#76B7B2",
+  "Actinobacteria"     = "#EDC948",
+  "Ignavibacteriae"    = "#FF9DA7",
+  "Planctomycetes"     = "#9C755F",
+  "Chloroflexi"        = "#BAB0AC",
+  "Verrucomicrobia"    = "#D4A6C8",
+  "Spirochaetes"       = "#FFBE7D",
+  "Armatimonadetes"    = "#A0CBE8",
+  "Elusimicrobia"      = "#86BCB6",
+  "Calditrichaeota"    = "#F1CE63",
+  "Gemmatimonadetes"   = "#D7B5A6",
+  "Fibrobacteres"      = "#C8A0D4",
+  "Kiritimatiellaeota" = "#B6D36B",
+  "Thermotogae"        = "#FA8775"
 )
-# Catch any remaining phyla automatically
-extra_phyla <- setdiff(unique(df_bar$Phylum), names(pal))
-extra_cols  <- setNames(
-  colorRampPalette(brewer.pal(8, "Set2"))(length(extra_phyla)),
-  extra_phyla
-)
-pal <- c(pal, extra_cols)
 
 p_bar <- ggplot(df_bar, aes(x = Sample, y = Abundance, fill = Phylum)) +
-  geom_bar(stat = "identity", color = "white", linewidth = 0.2) +
+  geom_bar(stat = "identity", color = NA) +
   facet_grid(~ Type, scales = "free_x", space = "free_x") +
   scale_fill_manual(values = pal) +
   scale_y_continuous(labels = scales::percent_format()) +
@@ -202,6 +208,7 @@ p_bar <- ggplot(df_bar, aes(x = Sample, y = Abundance, fill = Phylum)) +
   )
 
 p_bar
+ggsave("figures/bar_chart_phylum.png",p_bar, width = 10, height = 5,  dpi = 300)
 ```
 
 > **What to expect:** Plant samples are Cyanobacteria-dominated (phototrophic biofilm communities). Rock samples are extremely sparse — Rock_1 has only 6 detected species, almost certainly due to low read depth. Sediment_2 is exceptionally diverse (245 species vs. 50 in Sediment_1).
@@ -217,48 +224,19 @@ Alpha diversity measures richness and evenness **within** each sample.
 ```r
 ps_counts <- transform_sample_counts(ps, function(x) round(x * 10000))
 
-alpha_df <- estimate_richness(ps_counts, measures = c("Observed", "Shannon")) %>%
+alpha_df <- estimate_richness(ps_counts, measures = c("Observed", "Shannon", "Simpson")) %>%
   rownames_to_column("Sample") %>%
   left_join(meta, by = "Sample")
 
 print(alpha_df)
+
 ```
 
-Expected values from this dataset:
-
-| Sample | Shannon | Observed |
-|--------|---------|----------|
-| Rock_1 | 2.6 | 6 |
-| Rock_2 | 4.4 | 25 |
-| Water_1 | 5.4 | 53 |
-| Water_2 | 5.2 | 51 |
-| Plant_1 | 4.8 | 72 |
-| Plant_2 | 4.1 | 48 |
-| Sediment_1 | 5.3 | 50 |
-| Sediment_2 | 6.7 | 245 |
-
-### 5.1 Shannon diversity plot
-
-```r
-p_shannon <- ggplot(alpha_df, aes(x = Type, y = Shannon, color = Type)) +
-  geom_jitter(size = 4, width = 0.1, alpha = 0.9) +
-  scale_color_brewer(palette = "Set1") +
-  labs(
-    title    = "Alpha Diversity — Shannon Index",
-    subtitle = "Two replicates per environment type",
-    x = NULL, y = "Shannon Diversity (bits)"
-  ) +
-  theme_bw(base_size = 12) +
-  theme(legend.position = "none")
-
-p_shannon
-```
-
-### 5.2 All metrics side by side
+### 5.1 Plot all metrics side by side
 
 ```r
 alpha_long <- alpha_df %>%
-  pivot_longer(cols = c(Observed, Shannon), names_to = "Metric", values_to = "Value")
+  pivot_longer(cols = c(Observed, Shannon, Simpson), names_to = "Metric", values_to = "Value")
 
 p_alpha_all <- ggplot(alpha_long, aes(x = Type, y = Value, color = Type)) +
   geom_jitter(size = 3, width = 0.1, alpha = 0.85) +
@@ -269,6 +247,7 @@ p_alpha_all <- ggplot(alpha_long, aes(x = Type, y = Value, color = Type)) +
   theme(axis.text.x = element_text(angle = 35, hjust = 1), legend.position = "none")
 
 p_alpha_all
+ggsave("figures/alpha_diversity.png", p_alpha_all,  width = 10, height = 6,  dpi = 300)
 ```
 
 ---
@@ -285,17 +264,20 @@ ord       <- ordinate(ps, method = "PCoA", distance = bray_dist)
 ### 6.1 PCoA plot
 
 ```r
-p_pcoa <- plot_ordination(ps, ord, color = "Type", label = "Sample") +
+p_pcoa <- plot_ordination(ps, ord, color = "Type") +
   geom_point(size = 5, alpha = 0.9) +
+  geom_text(aes(label = Sample), vjust = -1, size = 3, show.legend=FALSE, position = "jitter")+
   scale_color_brewer(palette = "Set1") +
   labs(
     title    = "Beta Diversity — PCoA (Bray-Curtis)",
     subtitle = "Closer points = more similar communities",
-    color    = "Environment Type"
+    color    = "Type"
   ) +
   theme_bw(base_size = 12)
 
 p_pcoa
+ggsave("figures/beta_diversity_pcoa.png",p_pcoa,width = 7,height = 5,  dpi = 300)
+
 ```
 
 > **What to expect:**
