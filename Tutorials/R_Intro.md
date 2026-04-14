@@ -22,6 +22,23 @@ Import a csv file
 filename_df <-read.csv("path/to/a/dataset/ending/in/filename.csv",
                    header = TRUE, sep=",", strip.white=TRUE, stringsAsFactors=FALSE)
 ```
+## Variables
+Variables are containers for storing data values.
+
+Write a new variable for R to use. A variable is a name that stores a value or some data.  
+```bash
+new_df = filename_df
+new_df <- filename_df
+filename_df -> new_df
+```
+All three mean the same thing: you are creating a new variable called `new_df` that stores whatever is in `filename_df` (for example, a dataframe).
+
+### Other commands
+Use `print()` to see what is inside a variable
+```R
+print(filename_df)
+```
+
 List column and row names of the data
 ```R
 colnames(filename_df)
@@ -44,13 +61,5 @@ Write a table/data matrix as a tab-delimited file
 ```R
 write.table(object, "filename.tsv", sep="\t")
 ```
-
-Write a new variable for R to use. A variable is a name that stores a value or some data.  
-```bash
-new_df = filename_df
-new_df <- filename_df
-filename_df -> new_df
-```
-All three mean the same thing: you are creating a new variable called `new_df` that stores whatever is in `filename_df` (for example, a dataframe).
 
 Ok, let's begin!
