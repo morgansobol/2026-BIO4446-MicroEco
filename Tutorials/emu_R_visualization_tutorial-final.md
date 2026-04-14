@@ -40,6 +40,12 @@ install.packages(c(
 
 ```
 
+Install phyloseq
+```r
+BiocManager::install("phyloseq")
+```
+yes to install, and "a" to install all
+
 Load for each session:
 
 ```r
@@ -63,7 +69,7 @@ setwd("/user/student/Desktop/2026-MicroEco16S/")
 # Load Data ---------------------------------------------------------------
 
 # Load the EMU combined output
-emu <- read_tsv("./results-og/emu-combined-species.tsv")
+emu <- read_tsv("./results/emu-combined-species.tsv")
 
 # Load metadata
 meta <- read_csv("metadata.csv")
